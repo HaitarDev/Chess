@@ -39,9 +39,11 @@ export class Game {
   makeMove(user: WebSocket, move: { from: string; to: string }) {
     // validate
     if (this.moveCount % 2 === 0 && user !== this.player1) {
+      console.log("return early 1 ");
       return;
     }
     if (this.moveCount % 2 === 1 && user !== this.player2) {
+      console.log("return early 2 ");
       return;
     }
 
@@ -73,6 +75,7 @@ export class Game {
     }
 
     if (this.moveCount % 2 === 0) {
+      console.log("player 1 move ..");
       this.player2.send(
         JSON.stringify({
           type: MOVE,
@@ -80,6 +83,8 @@ export class Game {
         })
       );
     } else {
+      console.log("player 2 move ..");
+
       this.player1.send(
         JSON.stringify({
           type: MOVE,
@@ -88,5 +93,7 @@ export class Game {
       );
     }
     this.moveCount++;
+
+    console.log("move count ++", this.moveCount);
   }
 }

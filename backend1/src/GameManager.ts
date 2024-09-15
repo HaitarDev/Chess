@@ -22,28 +22,33 @@ export class GameManager {
     this.users.filter((currUser) => currUser !== user);
   }
 
-  private addHandler(socket: WebSocket) {
-    socket.on("message", (data) => {
+  private addHandler(user: WebSocket) {
+    user.on("message", (data) => {
       const message = JSON.parse(data.toString());
 
-      if (message === INIT_GAME) {
+      if (message.type === INIT_GAME) {
+        console.log("init game");
         if (this.pendingUser) {
           // start game
-          const game = new Game(this.pendingUser, socket);
+          console.log("Start Game");
+
+          const game = new Game(this.pendingUser, user);
           this.games.push(game);
           this.pendingUser = null;
         } else {
-          this.pendingUser = socket;
+          console.log("Waiting for user...");
+
+          this.pendingUser = user;
         }
       }
 
-      if (message === MOVE) {
+      if (message.type === MOVE) {
         // find the game
         const game = this.games.find(
-          (game) => game.player1 === socket || game.player2 === socket
+          (game) => game.player1 === user || game.player2 === user
         );
         if (game) {
-          game.makeMove(socket, message.move);
+          game.makeMove(user, message.move);
         }
       }
     });
